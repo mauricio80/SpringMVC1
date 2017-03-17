@@ -1,0 +1,40 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+    http://www.springframework.org/schema/security 
+    http://www.springframework.org/schema/security/spring-security-4.0.xsd">
+
+	<!-- El grupo de recursos protegidos (URLs) .
+		 En este caso esta toda la aplicación protegida /** y solo se permite el acceso al role “ROLE_Usuario”. -->
+<!-- 	<http auto-config="true"> -->
+<!--  		<intercept-url pattern="/**" access="ROLE_Usuario" /> -->
+<!--  		 Se indica la página donde se creara el formulario, la pagina de bienvenida y la de Logout -->
+<!--   		<form-login login-page='/springLogin.jsp' default-target-url='/bienvenida.jsp' always-use-default-target='true'/> -->
+<!--   		<logout logout-success-url="/springLogin.jsp"/> -->
+<!--  	</http> -->
+
+	<http auto-config="true" use-expressions="true">
+		<intercept-url pattern="/admin/*"
+	access="hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')" />
+	</http>
+
+	<beans:import resource="spring-servlet.xml" />
+	<beans:import resource="spring-data.xml" />
+	
+	<!-- AutenticationManager o gestor de autentificación es el que decide cuando un usuario es válido. 
+		 Este gestor esta intimamente relacionado con el concepto de AutenticationProvider o proveedor de autentificación. -->
+ 	<authentication-manager>
+	<!-- El AutenticationProvider define la forma en la que un usuario se ha de validar. 
+		 Puede ser contra una base de datos, puede ser contra un Ldap, puede ser contra un fichero o puede personalizarse.
+		 En este caso estamos utilizando un servicio en memoria que solo permite el acceso al siguiente usuario. -->
+ 		<authentication-provider>
+			<user-service>
+				<user name="admin"
+					password="admin"
+					authorities="ROLE_ADMIN" />
+			</user-service>
+ 		</authentication-provider>
+ 	</authentication-manager>      
+ 	
+</beans:beans>
