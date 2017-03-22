@@ -7,32 +7,46 @@
 
 	<!-- El grupo de recursos protegidos (URLs) .
 		 En este caso esta toda la aplicación protegida /** y solo se permite el acceso al role “ROLE_Usuario”. -->
-<!-- 	<http auto-config="true"> -->
-<!--  		<intercept-url pattern="/**" access="ROLE_Usuario" /> -->
-<!--  		 Se indica la página donde se creara el formulario, la pagina de bienvenida y la de Logout -->
-<!--   		<form-login login-page='/springLogin.jsp' default-target-url='/bienvenida.jsp' always-use-default-target='true'/> -->
-<!--   		<logout logout-success-url="/springLogin.jsp"/> -->
+<!-- 	<http auto-config="true" use-expressions="true"> -->
+<!--  		<intercept-url pattern="/admin/**" access="hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')" /> -->
+		<!-- Se indica la página donde se creara el formulario, la pagina de bienvenida y la de Logout -->
+<!--   		<form-login login-page='/login' default-target-url='/welcome'  -->
+<!--   			authentication-failure-url="/login?error" username-parameter="username" password-parameter="password"/> -->
+<!--   		<logout logout-success-url="/login?logout"/> -->
+<!--   		<csrf/> -->
 <!--  	</http> -->
 
-	<http auto-config="true" use-expressions="true">
-		<intercept-url pattern="/admin/*"
-	access="hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')" />
+<!-- 	<http auto-config="true" use-expressions="true"> -->
+<!-- 		<intercept-url pattern="/admin/*" access="hasAnyRole('ROLE_ADMIN','ROLE_MODERATOR')" /> -->
+<!-- 	</http> -->
+
+	<http auto-config="true">
+<!-- 		<intercept-url pattern="/admin**" access="ROLE_USER" /> -->
+		<intercept-url pattern="/**" access="permitAll" />
+		<form-login 
+			login-processing-url="/j_spring_security_check"
+		    login-page="/login" 
+		    default-target-url="/welcome" 
+			authentication-failure-url="/login?error" 
+			username-parameter="username"
+			password-parameter="password" />
+		<logout logout-success-url="/login?logout"  />
+		<!-- enable csrf protection -->
+		<csrf/>
 	</http>
 
-	<beans:import resource="spring-servlet.xml" />
-	<beans:import resource="spring-data.xml" />
+<!-- 	<beans:import resource="spring-servlet.xml" /> -->
+<!-- 	<beans:import resource="spring-data.xml" /> -->
 	
 	<!-- AutenticationManager o gestor de autentificación es el que decide cuando un usuario es válido. 
-		 Este gestor esta intimamente relacionado con el concepto de AutenticationProvider o proveedor de autentificación. -->
+		 Este gestor esta intimamente relacionado con el concepto de AutenticationProvider o proveedor de autentificacion. -->
  	<authentication-manager>
 	<!-- El AutenticationProvider define la forma en la que un usuario se ha de validar. 
 		 Puede ser contra una base de datos, puede ser contra un Ldap, puede ser contra un fichero o puede personalizarse.
 		 En este caso estamos utilizando un servicio en memoria que solo permite el acceso al siguiente usuario. -->
  		<authentication-provider>
 			<user-service>
-				<user name="admin"
-					password="admin"
-					authorities="ROLE_ADMIN" />
+				<user name="admin" password="admin"	authorities="ROLE_ADMIN" />
 			</user-service>
  		</authentication-provider>
  	</authentication-manager>      
